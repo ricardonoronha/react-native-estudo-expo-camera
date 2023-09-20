@@ -4,6 +4,8 @@ import * as MediaLibrary from "expo-media-library"
 import { useEffect, useRef, useState } from 'react';
 import * as Permissions from "expo-permissions"
 import * as ExpoFs from "expo-file-system";
+import { useIsFocused } from '@react-navigation/native';
+
 
 export default function CameraView() {
 
@@ -13,6 +15,7 @@ export default function CameraView() {
     console.log("diretorio dirTrimap", dirTrimap);
 
 
+    isFocused = useIsFocused();
 
     const [tipoCamera, setTipoCamera] = useState<CameraType>(CameraType.back);
     const [temPermissao, setTemPermissao] = useState<boolean | null>(null);
@@ -20,8 +23,9 @@ export default function CameraView() {
     const [permissaoPasta, setPermissaoPasta] = useState<ExpoFs.FileSystemRequestDirectoryPermissionsResult | null>(null);
     const [foto, setFoto] = useState<CameraCapturedPicture | null>(null)
     const cameraRef = useRef<Camera>(null);
-    const [fotoCorrente, setFotoCorrente] = useState<Number>(1);
+    const [fotoCorrente, setFotoCorrente] = useState(1);
     const [arquivos, setArquivos] = useState<string[]>([]);
+
 
 
     useEffect(() => {
@@ -44,16 +48,24 @@ export default function CameraView() {
                 }
             }
             else {
-                const arquvos = await ExpoFs.readDirectoryAsync(dirTrimap);
+                // const arquivosSearch = await ExpoFs.readDirectoryAsync(dirTrimap);
 
-                const maiorId: Number = arquivos
-                    .map(arq => arq.split("/").pop())
-                    .map(fileName => new Number(fileName?.substring(0, 4)))
-                    .reduce(function (a, b) {
-                        return Math.max(a, b);
-                    }, 1)
+                // const maiorId: Number = arquivosSearch
+                //     .map(arq => {
+                //         const fileName = arq.split("/").pop();
+                //         console.log(fileName);
+                //         return fileName;
+                //     })
+                //     .map(fileName => {
+                //         console.log(fileName);
+                //         return 0;
+                //         // return new Number(fileName?.substring(0, 4));
+                //     })
+                //     .reduce(function (a, b) {
+                //         return Math.max(a, b);
+                //     }, 1);
 
-                setFotoCorrente(maiorId);
+                // setFotoCorrente(maiorId);
             }
 
 
@@ -148,11 +160,16 @@ export default function CameraView() {
         </View>
     }
     else {
-        return <Camera type={tipoCamera} style={estilos.camera} ref={cameraRef} >
-            <TouchableOpacity style={estilos.obterFoto} onPress={obterFoto}>
-                <View />
-            </TouchableOpacity>
-        </Camera>;
+        if (isFocused) {
+            return <Camera type={tipoCamera} style={estilos.camera} ref={cameraRef} >
+                <TouchableOpacity style={estilos.obterFoto} onPress={obterFoto}>
+                    <View />
+                </TouchableOpacity>
+            </Camera>
+        }
+
+        return <Text>Selecione a tela</Text>
+
     }
 }
 

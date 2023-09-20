@@ -14,16 +14,19 @@ export default function App() {
 
   const Tab = createBottomTabNavigator();
 
-  // <NavigationContainer>
-  //       <Tab.Screen name="Camera" component={CameraView} />
-  //       <Tab.Screen name="Arquivos" component={ArquivosView} />
 
-  //     </NavigationContainer>
 
   return (
     <SafeAreaView style={estilos.container}>
       <StatusBar />
-      <ArquivosView />
+      <NavigationContainer>
+        <Tab.Navigator screenOptions={{ headerShown: false }}>
+          <Tab.Screen name="Camera" component={CameraView}/>
+          <Tab.Screen name="Arquivos" component={ArquivosView} />
+        </Tab.Navigator>
+      </NavigationContainer>
+
+
 
     </SafeAreaView>
   );
